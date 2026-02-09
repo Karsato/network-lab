@@ -13,7 +13,7 @@ Una vez desplegado el entorno con `docker-compose up -d`, puedes acceder a las h
 
 | Servicio | Acceso Web | Función |
 | :--- | :--- | :--- |
-| **GNS3 Server** | Puerto `3080` | Motor de emulación de red. |
+| **GNS3 Server** | [http://localhost:3080](http://localhost:3080) | Motor de emulación de red. |
 | **Wireshark** | [http://localhost:3008/vnc.html](http://localhost:3008/vnc.html) | Análisis de paquetes en tiempo real. |
 | **Grafana** | [http://localhost:3002](http://localhost:3002) | Dashboards y visualización de datos. |
 | **Prometheus** | [http://localhost:9090](http://localhost:9090) | Base de datos de métricas. |
