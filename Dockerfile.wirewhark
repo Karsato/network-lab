@@ -1,0 +1,31 @@
+FROM debian:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalamos Wireshark + Servidor VNC + Gestor de ventanas ligero + NoVNC
+RUN apt-get update && apt-get install -y \
+    wireshark \
+    tigervnc-standalone-server \
+    fluxbox \
+    novnc \
+    websockify \
+    libxcb-cursor0 \
+    && apt-get clean
+
+# Configuración de permisos para captura de paquetes
+RUN echo "wireshark-common wireshark-common/install-setuid boolean true" | debconf-set-selections \
+    && dpkg-reconfigure wireshark-common
+
+# Script que arranca el entorno gráfico y Wireshark
+RUN echo '#!/bin/bash\n\
+rm -rf /tmp/.X11-unix /tmp/.X1-lock\n\
+# Inicia VNC en el puerto interno 5901\n\
+vncserver :1 -geometry 1280x720 -depth 24 -SecurityTypes None\n\
+# Bridge de VNC a Web (puerto 6080)\n\
+websockify --web /usr/share/novnc/ 6080 localhost:5901 &\n\
+DISPLAY=:1 fluxbox &\n\
+DISPLAY=:1 wireshark\n\
+' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+EXPOSE 6080
+ENTRYPOINT ["/entrypoint.sh"]
