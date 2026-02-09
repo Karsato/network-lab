@@ -1,13 +1,56 @@
 # network-lab
-Network lab in docker. GNS3, Wireshark, Grafana.
+Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana. 
 
-# 🌐 Laboratorio de Redes Virtualizado (GNS3 + Stack de Monitoreo)
+---------------
+
+## 🛠️ Versión PODMAN: Despliegue en Podman
+
+Si utilizas **Podman**, puedes emplear una arquitectura de **red compartida** (`network_mode: service`). Esta configuración es más eficiente ya que todos los servicios de análisis y monitoreo se "inyectan" en el espacio de red del servidor GNS3.
+
+### 🔗 Enlaces de Acceso Directo (Modo Podman)
+
+| Servicio | Enlace de Acceso | Función |
+| :--- | :--- | :--- |
+| **GNS3 Web** | [http://localhost:3080](http://localhost:3080) | Servidor y gestión de nodos. |
+| **Wireshark Web** | [http://localhost:3001](http://localhost:3001) | Análisis de paquetes (VNC). |
+| **Grafana** | [http://localhost:3002](http://localhost:3002) | Visualización de métricas. |
+| **Prometheus** | [http://localhost:9090](http://localhost:9090) | Base de datos de telemetría. |
+
+---
+
+### 🧠 Conceptos Clave de esta Configuración
+
+
+
+#### 1. Red Unificada (`network_mode: service`)
+A diferencia de Docker estándar, aquí todos los contenedores auxiliares (Wireshark, Grafana, etc.) se vinculan a la interfaz de red de `gns3-server`. Esto permite que:
+* Wireshark pueda ver directamente las interfaces virtuales del servidor.
+* No existan conflictos de puertos entre contenedores, ya que todos se exponen a través del servicio principal.
+
+#### 2. Permisos y Volúmenes (`:Z`)
+En entornos con **SELinux** (común al usar Podman), el flag `:Z` es crítico. Permite que Podman reetiquete automáticamente los volúmenes para que varios contenedores puedan leer y escribir en `./gns3-data` sin errores de "Permission Denied".
+
+#### 3. Flujo de Análisis de Tráfico
+* **Captura:** GNS3 escribe los archivos `.pcap` en `./gns3-data/projects`.
+* **Inspección:** Wireshark accede a esos archivos a través del punto de montaje `/captures`.
+* **Telemetría:** El servicio `packet-exporter` monitoriza el tráfico en tiempo real usando `tshark` y lo prepara para ser procesado por el stack de monitoreo.
+
+---
+
+### 🚀 Instrucciones de Inicio
+
+1. **Levantar el entorno:**
+   ```bash
+   podman-compose up -d
+---------------
+ 
+## Versión DOCKER : 🌐 Laboratorio de Redes Virtualizado (GNS3 + Stack de Monitoreo)
 
 Este proyecto despliega un entorno completo de emulación de redes utilizando **GNS3**, junto con una suite de herramientas profesionales para el análisis de tráfico (**Wireshark**) y monitoreo de rendimiento (**Prometheus** y **Grafana**).
 
 ---
 
-## 🚀 Servicios y Acceso
+### 🚀 Servicios y Acceso
 
 Una vez desplegado el entorno con `docker-compose up -d`, puedes acceder a las herramientas mediante las siguientes direcciones:
 
@@ -20,7 +63,7 @@ Una vez desplegado el entorno con `docker-compose up -d`, puedes acceder a las h
 
 ---
 
-## 📂 Gestión de Capturas de Tráfico
+### 📂 Gestión de Capturas de Tráfico
 
 El contenedor de **Wireshark** está sincronizado con los proyectos de **GNS3**. Para analizar el tráfico de tus dispositivos:
 
@@ -34,7 +77,7 @@ El contenedor de **Wireshark** está sincronizado con los proyectos de **GNS3**.
 
 ---
 
-## 📊 Monitoreo (SNMP)
+### 📊 Monitoreo (SNMP)
 
 El laboratorio incluye un flujo de métricas automatizado:
 * **SNMP Exporter:** Consulta los dispositivos activos en GNS3.
@@ -44,7 +87,7 @@ El laboratorio incluye un flujo de métricas automatizado:
 
 ---
 
-## 🛠️ Estructura del Proyecto
+### 🛠️ Estructura del Proyecto
 
 Los datos se guardan de forma persistente en tu máquina local para que no pierdas el trabajo al reiniciar los contenedores:
 
@@ -55,7 +98,7 @@ Los datos se guardan de forma persistente en tu máquina local para que no pierd
 
 ---
 
-## ⚠️ Notas Técnicas
+### ⚠️ Notas Técnicas
 
 * **Permisos:** Si no puedes ver los archivos desde la web de Wireshark, asegúrate de que la carpeta local `projects` tenga permisos de lectura:  
   `chmod -R 755 ./projects`
