@@ -5,6 +5,18 @@ Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana.
 Hay que crear un nuevo dispositivo con la imagen de OpenWRT 24.10.
 Primero hay que crear un proyecto de test, importar la imagen de OpenWRT 24.10 y llamarla "openwrt 24.10".
 Después se importa el proyecto y crea una red de 3 niveles. Capa de acceso, capa de transporte y núcleo.
+Solo están configurados los routers L0R0, L1R0, L2R0 y PC1.
+Para configurar el resto, ver L0R0.sh, L1R0.sh, L2R0.sh y cambiar las ips como se indica en el esquema.
+
+Hay que configurar una red de docker:
+docker network create --subnet=172.50.0.0/24 gns3_gf
+
+Después averiguamos cual es el nombre del adaptador:
+ip addr | grep 172.50.0.1                               
+    inet 172.50.0.1/24 brd 172.50.0.255 scope global br-dad0cdbac20b
+
+Con el id del adaptador "br-dad0cdbac20b" en este caso. Quitamos el nodo cloud que trae el proyecto ycreamos un nuevo nodo cloud. Conectamos el nuevo nodo cloud con el router L0R0 desde ethernet0 al cloud "br-dad0cdbac20b" o el que tenga cada uno en su caso. Esto hará que nuestra red tenga salida a internet. 
+
 
 ---------------
 
