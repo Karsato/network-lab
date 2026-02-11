@@ -31,6 +31,25 @@ services:
       - ./projects:/storage/gns3-projects
     environment:
       - TZ=Europe/Madrid
+  #wireshark:
+  #  image: linuxserver/wireshark:latest
+  #  container_name: wireshark
+  #  restart: unless-stopped
+  #  network_mode: host
+  #  privileged: true
+  #  shm_size: "1gb" # Obligatorio para evitar el fondo negro
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Europe/Madrid
+  #    - CUSTOM_PORT=3008
+  #    - CUSTOM_HTTPS_PORT=3009
+  #    # Estas dos variables desactivan la aceleración hardware que suele romper el stream en Docker
+  #    - DISPLAY=:1
+  #    - OC_DISABLE_GL=1
+  #  volumes:
+  #    - ./projects:/storage/gns3-projects
+  #    - /tmp/.X11-unix:/tmp/.X11-unix # Permite que se conecte al servidor gráfico correctamente
   # Grafana: Visualización (Cambiado al puerto 3002 para evitar conflicto con Wireshark)
   grafana:
     image: grafana/grafana:latest
