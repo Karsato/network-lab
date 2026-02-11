@@ -1,0 +1,58 @@
+services:
+  gns3-server:
+    image: docker.io/gns3/gns3-server:latest
+    container_name: gns3-server
+    privileged: true
+    environment:
+      - TZ=Europe/Madrid
+    volumes:
+      - ./gns3-data:/root/GNS3:Z # Esta es la ruta correcta para esta imagen
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - "3080:3080"
+      - "3001:3000"
+      - "5000-5050:5000-5050"
+
+  wireshark:
+    image: lscr.io/linuxserver/wireshark:latest
+    container_name: wireshark
+    depends_on:
+      - gns3-server
+    network_mode: "service:gns3-server"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+    volumes:
+      # Ahora Wireshark verá exactamente lo mismo que GNS3
+      - ./gns3-data:/captures:Z
+  # El "Exportador": Lee los paquetes y los convierte en números
+  packet-exporter:
+    image: docker.io/alpine:latest
+    container_name: packet-exporter
+    network_mode: "service:gns3-server"
+    volumes:
+      - ./gns3-data:/captures:ro
+    command: >
+      sh -c "apk add --no-cache tshark &&
+      tshark -i any -t ad -T fields -e frame.len -l > /tmp/traffic.log"
+    # Este es un ejemplo simplificado; lo ideal es un exportador de Prometheus real
+
+  prometheus:
+    image: docker.io/prom/prometheus
+    container_name: prometheus
+    network_mode: "service:gns3-server"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:Z
+
+  grafana:
+    image: docker.io/grafana/grafana
+    container_name: grafana
+    network_mode: "service:gns3-server"
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
