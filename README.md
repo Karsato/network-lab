@@ -1,5 +1,10 @@
 # network-lab
-Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana. 
+Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana.
+
+## Routers
+Hay que crear un nuevo dispositivo con la imagen de OpenWRT 24.10.
+Primero hay que crear un proyecto de test, importar la imagen de OpenWRT 24.10 y llamarla "openwrt 24.10".
+Después se importa el proyecto y crea una red de 3 niveles. Capa de acceso, capa de transporte y núcleo.
 
 ---------------
 
