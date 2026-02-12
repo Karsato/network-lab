@@ -3,13 +3,13 @@ Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana.
 
 # A lo fácil
 ```sh
-./setup.sh
+make lab--start
 ```
 Importa la imagen de OpenWRT y lanza docker.
 
 # Easy Start
 ```sh
-./setup.sh
+make lab--start
 ```
 Sets the OpenWrt Image up and starts docker up.
 
