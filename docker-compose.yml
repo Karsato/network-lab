@@ -16,21 +16,34 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Madrid
-  wireshark-custom:
-    build:
-      context: .
-      dockerfile: Dockerfile.wireshark
-    container_name: wireshark-custom
+  wireshark:
+    image: lscr.io/linuxserver/wireshark:latest
+    container_name: wireshark
     restart: unless-stopped
-    user: root
-    ports:
-      - "3008:6080"
     privileged: true
-    volumes:
-      # Montamos la carpeta del host donde GNS3 guarda los proyectos
-      - ./projects:/storage/gns3-projects
+    ports:
+      - "3001:3000" # Mapeamos el puerto 3001 (host) al 3000 (web interno)
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Europe/Madrid
+    volumes:
+      - ./projects:/storage/gns3-projects
+  #wireshark-custom:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile.wireshark
+  #  container_name: wireshark-custom
+  #  restart: unless-stopped
+  #  user: root
+  #  ports:
+  #    - "3008:6080"
+  #  privileged: true
+  #  volumes:
+  #    # Montamos la carpeta del host donde GNS3 guarda los proyectos
+  #    - ./projects:/storage/gns3-projects
+  #  environment:
+  #    - TZ=Europe/Madrid
   #wireshark:
   #  image: linuxserver/wireshark:latest
   #  container_name: wireshark
