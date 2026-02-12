@@ -1,5 +1,18 @@
-# network-lab
+# Network-lab
 Network lab in PODMAN or DOCKER. GNS3, Wireshark, Grafana.
+
+# A lo fácil
+```sh
+./setup.sh
+```
+Importa la imagen de OpenWRT y lanza docker.
+
+# Easy Start
+```sh
+./setup.sh
+```
+Sets the OpenWrt Image up and starts docker up.
+
 
 ## Routers
 Hay que crear un nuevo dispositivo con la imagen de OpenWRT 24.10.
