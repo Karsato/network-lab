@@ -18,7 +18,7 @@ docker--up: gns3--importar-imagenes ## Levanta los contenedores con Docker
 podman--up: gns3--importar-imagenes ## Levanta los contenedores con Podman
 	podman-compose -f podman-compose.yml up -d
 
-lab--start: ## Abre GNS3 y Wireshark en Firefox
+lab--start: docker--up ## Abre GNS3 y Wireshark en Firefox
 	@echo "Esperando a que los servicios suban..."
 	@sleep 3
 	$(BROWSER) http://localhost:3080/ http://localhost:3001/ > /dev/null 2>&1 &
