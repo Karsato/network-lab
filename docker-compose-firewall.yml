@@ -22,13 +22,19 @@ services:
         ipv4_address: 192.168.1.2
     command: sleep infinity
 
+  # El Servidor (Red Interna protegida)
   servidor:
     image: nginxdemos/hello
+    privileged: true  # <--- ESTO ES LO QUE FALTA
     networks:
       red_interna:
         ipv4_address: 192.168.1.10
-    # Importante: La puerta de enlace del servidor es el firewall (la .2)
-    entrypoint: /bin/sh -c "ip route del default && ip route add default via 192.168.1.2 && nginx -g 'daemon off;'"
+    entrypoint: >
+      /bin/sh -c "
+      ip route del default || true;
+      ip route add default via 192.168.1.2;
+      nginx -g 'daemon off;'
+      "
 
 networks:
   red_externa:
