@@ -1,40 +1,53 @@
 services:
+  # Nodo Cliente: Representa la red externa
   cliente:
-    image: nicolaka/netshoot
+    image: debian:bookworm-slim
+    container_name: network-lab-cliente-1
+    privileged: true
     networks:
       red_externa:
         ipv4_address: 10.0.1.10
-    command: sleep infinity
+    tty: true
+    stdin_open: true
+    command: >
+      sh -c "apt update && apt install -y iproute2 iputils-ping curl && 
+             ip route del default && 
+             ip route add default via 10.0.1.2 && 
+             tail -f /dev/null"
 
+  # Nodo Firewall: El router/filtro central
   firewall:
     build:
       context: .
       dockerfile: Dockerfile.firewall
+    container_name: network-lab-firewall-1
     privileged: true
     sysctls:
       - net.ipv4.ip_forward=1
     networks:
       red_externa:
-        # CAMBIADO: La .1 es para el bridge, usamos la .2
-        ipv4_address: 10.0.1.2 
+        ipv4_address: 10.0.1.2
       red_interna:
-        # CAMBIADO: La .1 es para el bridge, usamos la .2
         ipv4_address: 192.168.1.2
-    command: sleep infinity
+    tty: true
+    stdin_open: true
+    command: tail -f /dev/null
 
-  # El Servidor (Red Interna protegida)
+  # Nodo Servidor: La red interna protegida
   servidor:
-    image: nginxdemos/hello
-    privileged: true  # <--- ESTO ES LO QUE FALTA
+    image: debian:bookworm-slim
+    container_name: network-lab-servidor-1
+    privileged: true
     networks:
       red_interna:
         ipv4_address: 192.168.1.10
-    entrypoint: >
-      /bin/sh -c "
-      ip route del default || true;
-      ip route add default via 192.168.1.2;
-      nginx -g 'daemon off;'
-      "
+    tty: true
+    stdin_open: true
+    command: >
+      sh -c "apt update && apt install -y iproute2 iputils-ping nginx && 
+             ip route del default && 
+             ip route add default via 192.168.1.2 && 
+             nginx -g 'daemon off;'"
 
 networks:
   red_externa:

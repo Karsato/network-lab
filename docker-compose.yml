@@ -64,33 +64,33 @@ services:
   #    - ./projects:/storage/gns3-projects
   #    - /tmp/.X11-unix:/tmp/.X11-unix # Permite que se conecte al servidor gráfico correctamente
   # Grafana: Visualización (Cambiado al puerto 3002 para evitar conflicto con Wireshark)
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - GF_SERVER_HTTP_PORT=3002
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    volumes:
-      - grafana-storage:/var/lib/grafana
-
-  # Prometheus: La base de datos
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
-
-  # SNMP Exporter: El adaptador
-  snmp-exporter:
-    image: prom/snmp-exporter:latest
-    container_name: snmp-exporter
-    restart: unless-stopped
-    network_mode: host
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: grafana
+#    restart: unless-stopped
+#    network_mode: host
+#    environment:
+#      - GF_SERVER_HTTP_PORT=3002
+#      - GF_SECURITY_ADMIN_PASSWORD=admin
+#    volumes:
+#      - grafana-storage:/var/lib/grafana
+#
+#  # Prometheus: La base de datos
+#  prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus
+#    restart: unless-stopped
+#    network_mode: host
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#      - prometheus-data:/prometheus
+#
+#  # SNMP Exporter: El adaptador
+#  snmp-exporter:
+#    image: prom/snmp-exporter:latest
+#    container_name: snmp-exporter
+#    restart: unless-stopped
+#    network_mode: host
 
 volumes:
   prometheus-data:
